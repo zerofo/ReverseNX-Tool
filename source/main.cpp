@@ -45,11 +45,11 @@ bool isAllUpper(const std::string& word)
 
 void RemoveReverseNX(u64 tid) {
 	if (tid == UINT64_MAX) for (uint8_t i = 0; i < 2; i++) {
-		snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/SaltySD/patches/%s", Files[i]);
+		snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/switch/SaltySD/patches/%s", Files[i]);
 		remove(ReverseNX);
 	}
 	else for (uint8_t i = 0; i < 2; i++) {
-		snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/SaltySD/patches/%016" PRIx64 "/%s", tid, Files[i]);
+		snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/switch/SaltySD/patches/%016" PRIx64 "/%s", tid, Files[i]);
 		remove(ReverseNX);
 	}
 	brls::Application::notify("Found and deleted broken patches.");
@@ -59,7 +59,7 @@ void setReverseNX(uint64_t tid, Flag changedFlag) {
 	
 	for (uint8_t i = 0; i < 2; i++) {
 		if (tid == UINT64_MAX) {
-			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/SaltySD/patches/%s", Files[i]);
+			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/switch/SaltySD/patches/%s", Files[i]);
 			FILE* asem = fopen(ReverseNX, "wb");
 			switch(changedFlag) {
 				case Flag_Handheld:
@@ -80,11 +80,11 @@ void setReverseNX(uint64_t tid, Flag changedFlag) {
 			}
 		}
 		else {
-			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/SaltySD/patches/%016" PRIx64, tid);
+			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/switch/SaltySD/patches/%016" PRIx64, tid);
 			DIR* patchdir = opendir(ReverseNX);
 			if (patchdir == NULL) mkdir(ReverseNX, 777);
 			else closedir(patchdir);
-			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/SaltySD/patches/%016" PRIx64 "/%s", tid, Files[i]);
+			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/switch/SaltySD/patches/%016" PRIx64 "/%s", tid, Files[i]);
 			FILE* asem = fopen(ReverseNX, "wb");
 			switch(changedFlag) {
 				case Flag_Handheld:
@@ -111,7 +111,7 @@ Flag getReverseNX(uint64_t tid) {
 	uint8_t cmpresult = 0;
 	
 	if (tid == UINT64_MAX) {
-		snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/SaltySD/patches/%s", Files[0]);
+		snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/switch/SaltySD/patches/%s", Files[0]);
 		FILE* asem = fopen(ReverseNX, "r");
 		
 		if (asem != NULL) {
@@ -129,7 +129,7 @@ Flag getReverseNX(uint64_t tid) {
 			else handheldflag = true;
 			fclose(asem);
 
-			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/SaltySD/patches/%s", Files[1]);
+			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/switch/SaltySD/patches/%s", Files[1]);
 			asem = fopen(ReverseNX, "r");
 			if (asem != NULL) {
 				fread(&filebuffer, 1, 16, asem);
@@ -151,7 +151,7 @@ Flag getReverseNX(uint64_t tid) {
 		}
 		
 		else {
-			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/SaltySD/patches/%016" PRIx64 "/%s", tid, Files[1]);
+			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/switch/SaltySD/patches/%016" PRIx64 "/%s", tid, Files[1]);
 			asem = fopen(ReverseNX, "r");
 			if (asem != NULL) {
 				fclose(asem);
@@ -163,7 +163,7 @@ Flag getReverseNX(uint64_t tid) {
 	}
 	
 	else {
-		snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/SaltySD/patches/%016" PRIx64 "/%s", tid, Files[0]);
+		snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/switch/SaltySD/patches/%016" PRIx64 "/%s", tid, Files[0]);
 		FILE* asem = fopen(ReverseNX, "r");
 		if (asem != NULL) {
 			fread(&filebuffer, 1, 16, asem);
@@ -180,7 +180,7 @@ Flag getReverseNX(uint64_t tid) {
 			else handheldflag = true;
 			fclose(asem);
 				
-			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/SaltySD/patches/%016" PRIx64 "/%s", tid, Files[1]);
+			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/switch/SaltySD/patches/%016" PRIx64 "/%s", tid, Files[1]);
 			asem = fopen(ReverseNX, "r");
 			if (asem != NULL) {
 				fread(&filebuffer, 1, 16, asem);
@@ -201,7 +201,7 @@ Flag getReverseNX(uint64_t tid) {
 			}
 		}
 		else {
-			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/SaltySD/patches/%016" PRIx64 "/%s", tid, Files[1]);
+			snprintf(ReverseNX, sizeof ReverseNX, "sdmc:/switch/SaltySD/patches/%016" PRIx64 "/%s", tid, Files[1]);
 			asem = fopen(ReverseNX, "r");
 			if (asem != NULL) {
 				fclose(asem);
@@ -280,8 +280,8 @@ int main(int argc, char *argv[])
 	}
 	
 	//Create patches folder if doesn't exist
-	DIR* patches_dir = opendir("sdmc:/SaltySD/patches");
-	if (patches_dir == NULL) mkdir("sdmc:/SaltySD/patches", 777);
+	DIR* patches_dir = opendir("sdmc:/switch/SaltySD/patches");
+	if (patches_dir == NULL) mkdir("sdmc:/switch/SaltySD/patches", 777);
 	else closedir(patches_dir);
 	memset(&appControlData, 0x0, sizeof(NsApplicationControlData));
 	
