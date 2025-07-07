@@ -1,40 +1,34 @@
-name: NX_CI
+
+name: build
 
 on:
+  workflow_dispatch:
   push:
     branches:
       - master
-  release:
-    types: [published]
+
 jobs:
-  build_NX:
-      runs-on: ubuntu-latest
-    
-      steps:
-        - name: Extract owner and repo
-          uses: jungwinter/split@v1
-          id: repo
-          with:
-            seperator: /
-            msg: ${{ github.repository }}
+  build:
+    runs-on: ubuntu-latest
+    container: devkitpro/devkita64
+
+    steps:
         - name: Checkout
-          uses: actions/checkout@v2
+          uses: actions/checkout@master
           with:
             ref: master
             submodules: recursive
-        - name: Use Docker Build
-          uses: actions-hub/docker/cli@master
-          env:
-              SKIP_LOGIN: true
         - run: |
-                docker run -t --rm --name builder -v `pwd`:`pwd` -w `pwd` zerofo/ns_dev:0.9b2 make
+                git config --global --add safe.directory $(pwd)
+                git submodule update --init --recursive
+                make
         - name: Upload file
-          uses: actions/upload-artifact@v2
+          uses: actions/upload-artifact@master
           with:
-            name: ${{ steps.repo.outputs._1 }} 
+            name: ReverseNX-RT 
             path: ./*.nro
         - name: Upload binaries to release
-          uses: svenstaro/upload-release-action@v2
+          uses: svenstaro/upload-release-action@master
           with:
             repo_token: ${{ secrets.release_token }}
             file: ./*.nro
